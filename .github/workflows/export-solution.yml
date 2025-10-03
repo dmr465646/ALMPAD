@@ -27,4 +27,4 @@ jobs:
         uses: microsoft/powerplatform-actions/unpack-solution@v1
         with:
           solution-file: 'solution.zip'
-          solution-folder: 'solutions/YourSolutionName'
+          solution-folder: 'solutions/Test'
