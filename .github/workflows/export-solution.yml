@@ -1,0 +1,27 @@
+name: Export and Unpack Power Platform Solution
+
+on:
+  workflow_dispatch:
+
+jobs:
+  export-unpack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Export solution
+        uses: microsoft/powerplatform-actions/export-solution@v0
+        with:
+          environment-url: ${{ secrets.ENVIRONMENT_URL }}
+          client-id: ${{ secrets.CLIENT_ID }}
+          tenant-id: ${{ secrets.TENANT_ID }}
+          client-secret: ${{ secrets.CLIENT_SECRET }}
+          solution-name: 'YourSolutionName'
+          solution-output-file: 'solution.zip'
+
+      - name: Unpack solution
+        uses: microsoft/powerplatform-actions/unpack-solution@v0
+        with:
+          solution-file: 'solution.zip'
+          solution-folder: 'solutions/YourSolutionName'
