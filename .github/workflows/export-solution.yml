@@ -5,26 +5,66 @@ on:
 
 jobs:
   export-unpack:
-    runs-on: windows-latest  # Use Windows runner for better compatibility
+    runs-on: windows-latest
     steps:
       - name: Install Power Platform Tools
         uses: microsoft/powerplatform-actions/actions-install@v1
 
       - name: Checkout repo
         uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+          fetch-depth: 0
 
       - name: Export solution
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
           environment-url: ${{ secrets.ENVIRONMENT_URL }}
-          client-id: ${{ secrets.CLIENT_ID }}
+          app-id: ${{ secrets.CLIENT_ID }}
           tenant-id: ${{ secrets.TENANT_ID }}
           client-secret: ${{ secrets.CLIENT_SECRET }}
           solution-name: 'Test'
           solution-output-file: 'solution.zip'
+
+      - name: Confirm solution.zip exists
+        run: |
+          if (Test-Path "solution.zip") {
+            Write-Host "solution.zip found."
+          } else {
+            Write-Error "solution.zip not found!"
+            exit 1
+          }
+        shell: pwsh
 
       - name: Unpack solution
         uses: microsoft/powerplatform-actions/unpack-solution@v1
         with:
           solution-file: 'solution.zip'
           solution-folder: 'solutions/Test'
+
+      - name: List unpacked solution contents
+        run: |
+          echo "Listing contents of solutions/Test:"
+          ls -R solutions/Test
+        shell: bash
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+        shell: bash
+
+      - name: Commit and push unpacked solution if changes exist
+        run: |
+          git add solutions/Test
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Add unpacked solution files"
+            BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+            echo "Pushing to branch: $BRANCH_NAME"
+            git push origin $BRANCH_NAME
+          fi
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
