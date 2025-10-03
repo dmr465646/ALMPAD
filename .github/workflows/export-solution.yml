@@ -17,7 +17,7 @@ jobs:
           client-id: ${{ secrets.CLIENT_ID }}
           tenant-id: ${{ secrets.TENANT_ID }}
           client-secret: ${{ secrets.CLIENT_SECRET }}
-          solution-name: 'YourSolutionName'
+          solution-name: Test
           solution-output-file: 'solution.zip'
 
       - name: Unpack solution
