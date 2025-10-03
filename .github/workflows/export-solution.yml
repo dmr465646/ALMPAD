@@ -23,8 +23,24 @@ jobs:
           solution-name: 'Test'
           solution-output-file: 'solution.zip'
 
+      - name: Confirm solution.zip exists
+        run: |
+          if (Test-Path "solution.zip") {
+            Write-Host "solution.zip found."
+          } else {
+            Write-Error "solution.zip not found!"
+            exit 1
+          }
+        shell: pwsh
+
       - name: Unpack solution
         uses: microsoft/powerplatform-actions/unpack-solution@v1
         with:
           solution-file: 'solution.zip'
           solution-folder: 'solutions/Test'
+
+      - name: List unpacked solution contents
+        run: |
+          Write-Host "Listing contents of solutions/Test:"
+          Get-ChildItem -Recurse solutions/Test
+        shell: pwsh
