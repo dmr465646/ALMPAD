@@ -5,7 +5,7 @@ on:
 
 jobs:
   export-unpack:
-    runs-on: windows-latest  # Use Windows runner for better compatibility
+    runs-on: windows-latest
     steps:
       - name: Install Power Platform Tools
         uses: microsoft/powerplatform-actions/actions-install@v1
@@ -17,7 +17,7 @@ jobs:
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
           environment-url: ${{ secrets.ENVIRONMENT_URL }}
-          client-id: ${{ secrets.CLIENT_ID }}
+          app-id: ${{ secrets.CLIENT_ID }}
           tenant-id: ${{ secrets.TENANT_ID }}
           client-secret: ${{ secrets.CLIENT_SECRET }}
           solution-name: 'Test'
